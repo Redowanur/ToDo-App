@@ -5,20 +5,34 @@ export default function CreateNote(props) {
     const [content, setContent] = useState({
         title: '',
         note: '',
-    })
+    });
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const InputEvent =(e)=>{
-        const {name, value} = e.target
+    const InputEvent = (e) => {
+        const { name, value } = e.target;
 
-        setContent((prevData)=>{
-            return{
+        setContent((prevData) => {
+            return {
                 ...prevData,
                 [name]: value
-            }
-        })
+            };
+        });
+    };
 
-        // console.log(content)
-    }
+    const handleAddContent = (e) => {
+        e.preventDefault();
+
+        if (content.note !== '' && content.title !== '') {
+            props.passContent(content);
+            setContent({
+                title: '',
+                note: ''
+            });
+            setErrorMessage('');
+        } else {
+            setErrorMessage('Please add a title and note');
+        }
+    };
 
     return (
         <>
@@ -31,6 +45,7 @@ export default function CreateNote(props) {
                         onChange={InputEvent}
                         placeholder="Title" 
                         className="outline-none text-xl font-bold bg-gray-50"
+                        required
                         autoComplete="off"
                     />
                     <textarea 
@@ -41,19 +56,16 @@ export default function CreateNote(props) {
                         onChange={InputEvent}
                         placeholder="Take a note..." 
                         className="outline-none min-h-10 bg-gray-50"
+                        required
                         autoComplete="off"
                     />
+                    {errorMessage && (
+                        <p className="text-red-500 text-sm">{errorMessage}</p>
+                    )}
                     <div className='flex justify-end'>
                         <button
                             className="bg-yellow-500 w-8 h-8 rounded-full text-white"
-                            onClick={(e)=>  {
-                                e.preventDefault()
-                                props.passContent(content)
-                                setContent({
-                                    title: '',
-                                    note: ''
-                                });
-                            }}
+                            onClick={handleAddContent}
                         >
                             <Add/>
                         </button>
